@@ -1,0 +1,103 @@
+#%RAML 1.0
+title: raml2gin 
+version: 0.1
+baseUri: /
+types:
+  TestType:
+    type: |
+      {
+        "title": "TestType",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "optional": {
+            "type": "string",
+            "required": false
+          },
+          "expanded": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+  # Define types in ad resource
+  Ad:
+      type: object
+      properties:
+        ad_platform:
+          type: string
+          description: "Which platform place the ad <booksite, ...>"
+        ad_type:
+          type: integer
+          description: "Where the type is the position of the platform <banner, ...>"
+        ad_bid_method:
+          type: string
+          description: "Chose the method of bidding<cpc, cpm>"
+        ad_bid_cost:
+          type: number
+          description: "How much would pay"
+        ad_bid_auto:
+          type: boolean
+          description: "Enable the auto bid<Deafult:FALSE>"
+          required: false
+  # Ads:
+  #     type: array
+  #     items: Ad
+  ResAd:
+      type: object
+      properties:
+        ad_id:
+          type: string
+          description: "ID of ad"
+          required: false
+        ad_created_date:
+          type: integer
+          description: "Date of create of ad"
+          required: false
+  # ResAds:
+  #   type: array
+  #   items: ResAd
+
+# GET health check
+/health/check:
+  displayName: GetHealthCheck
+  description: Check the API is healthy
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: {
+             "status":"ok"
+            }
+
+# POST Create Ads
+/ads/create:
+  displayName: PostCreateAds
+  description: Create new ads
+  post:
+    body:
+        application/json:
+          type: object
+          properties:
+            ads: Ad[]
+            token:
+              type: string
+              description: "Authenticate this is the valid user"
+    responses:
+      200:
+        body:
+          application/json:
+              type: object
+              properties:
+                  data:
+                    type: object
+                    required: false
+                    properties:
+                      ads: ResAd[]
